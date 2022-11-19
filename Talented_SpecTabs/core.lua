@@ -95,6 +95,7 @@ local function TabFrame_OnClick(self, button)
 		if template then Talented:OpenTemplate(template) end
 		Tabs_UpdateCheck(self:GetParent(), template)
 	end
+	Talented:CloseMenu()
 end
 
 local function TabFrame_Update(self)

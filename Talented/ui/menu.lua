@@ -277,6 +277,34 @@ StaticPopupDialogs["TALENTED_EXPORT_TO"] = {
 	hideOnEscape = 1
 }
 
+function Talented:CreateRoleMenu()
+	local menu = self:GetNamedMenu("Role")
+	local entry = self:GetNamedMenu("Tank")
+	entry.text = L["Tank"]
+	entry.disabled = true
+	entry.checked = false
+	entry.func = function (entry, talentGroup) SetTalentGroupRole(talentGroup, "TANK") end
+	menu[#menu + 1] = entry
+
+	entry = self:GetNamedMenu("Damager")
+	entry.text = L["Damager"]
+	entry.disabled = true
+	entry.checked = false
+	entry.func = function (entry, talentGroup) SetTalentGroupRole(talentGroup, "DAMAGER") end
+	menu[#menu + 1] = entry
+
+	entry = self:GetNamedMenu("Healer")
+	entry.text = L["Healer"]
+	entry.disabled = true
+	entry.checked = false
+	entry.func = function (entry, talentGroup) SetTalentGroupRole(talentGroup, "HEALER") end
+	menu[#menu + 1] = entry
+
+	self.CreateRoleMenu = function (self) return self:GetNamedMenu("Role") end
+
+	return menu
+end
+
 function Talented:CreateActionMenu()
 	local menu = self:GetNamedMenu("Action")
 
@@ -393,6 +421,47 @@ local function Export_Template(entry, handler)
 	end
 end
 
+function Talented:MakeRoleMenu()
+	local menu = self:CreateRoleMenu()
+	local templateTalentGroup, activeTalentGroup = self.template.talentGroup, GetActiveTalentGroup()
+	local talentGroupRole = nil 
+	if templateTalentGroup then
+		talentGroupRole = GetTalentGroupRole(templateTalentGroup)
+	end
+
+	local tank = self:GetNamedMenu("Tank")
+	local damager = self:GetNamedMenu("Damager")
+	local healer = self:GetNamedMenu("Healer")
+
+	tank.checked = false
+	damager.checked = false
+	healer.checked = false
+
+	if talentGroupRole == "TANK" then
+		tank.checked = true
+	elseif talentGroupRole == "HEALER" then
+		healer.checked = true
+	else
+		damager.checked = true
+	end
+
+	if templateTalentGroup then
+		tank.disabled = false
+		damager.disabled = false
+		healer.disabled = false
+
+		tank.arg1 = templateTalentGroup
+		damager.arg1 = templateTalentGroup
+		healer.arg1 = templateTalentGroup
+	else
+		tank.disabled = true
+		damager.disabled = true
+		healer.disabled = true
+	end
+
+	return menu
+end
+
 function Talented:MakeActionMenu()
 	local menu = self:CreateActionMenu()
 	local templateTalentGroup, activeTalentGroup = self.template.talentGroup, GetActiveTalentGroup()
@@ -471,6 +540,10 @@ end
 
 function Talented:OpenTemplateMenu(frame)
 	EasyMenu(self:MakeTemplateMenu(), self:GetDropdownFrame(frame))
+end
+
+function Talented:OpenRoleMenu(frame)
+	EasyMenu(self:MakeRoleMenu(), self:GetDropdownFrame(frame))
 end
 
 function Talented:OpenActionMenu(frame)

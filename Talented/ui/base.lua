@@ -193,6 +193,16 @@ local function CreateBaseButtons(parent)
 	fs:SetPoint("LEFT", parent.bglyphs, "RIGHT", 14, 0)
 	parent.targetname = fs
 
+	local b = MakeButton(parent)
+	parent.brole = b
+	b:SetParent(parent)
+	b:SetText(L["Role"])
+	b:SetSize(max(110, b:GetTextWidth() + 22), 22)
+	b:SetScript("OnClick", function (self)
+		Talented:OpenRoleMenu(self)
+	end)
+	b:SetPoint("LEFT", parent.targetname, "RIGHT", 14, 0)
+
 	do
 		local f = CreateFrame("Frame", nil, parent)
 		local fs = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
